@@ -20,17 +20,17 @@ int main (int argc, char *argv[]) {
         
         if (argc == 1) {
             
-            printf ("jsh: ");
+            printf (RED "cf-sh:" RESET YELLOW "%s " RESET "$ ", get_path ());
         
         } else if (argc == 2) {
             
             if (strcmp (argv[1], "-") != 0) {
                 
-                printf ("%s: ", argv[1]);
+                printf (RED "%s:" RESET YELLOW "%s " RESET "$ ", argv[1], get_path ());
                 
             }
             
-        } else { perror ("argc"); exit (EXIT_FAILURE); }
+        } else { perror ("cf-sh: argc"); exit (EXIT_FAILURE); }
             
         if (fgets (cmd_line_input, input_size, stdin)) {
             

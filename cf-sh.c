@@ -64,7 +64,7 @@ char *get_path () {
         
         return cwd;
         
-    } else { perror ("jsh: working dir"); exit (EXIT_FAILURE); }
+    } else { perror ("cf-sh: working dir"); exit (EXIT_FAILURE); }
     
 }
 
@@ -94,8 +94,8 @@ void parse_input (char *cmd_line_input) {
     commands cmds = malloc (sizeof (struct Commands));
     cmds [num_cmds - 1] = init ();
     
-    if ((stdinfd = dup (0)) < 0) { perror ("jsh: dup (stdin)"); exit (EXIT_FAILURE); }
-    if ((stdoutfd = dup (1)) < 0) { perror ("jsh: dup (stdout)"); close (stdinfd); exit (EXIT_FAILURE); }
+    if ((stdinfd = dup (0)) < 0) { perror ("cf-sh: dup (stdin)"); exit (EXIT_FAILURE); }
+    if ((stdoutfd = dup (1)) < 0) { perror ("cf-sh: dup (stdout)"); close (stdinfd); exit (EXIT_FAILURE); }
     
     //fprintf (stderr, "FD %d and FD %d\n", stdinfd, stdoutfd);
     
@@ -116,7 +116,7 @@ void parse_input (char *cmd_line_input) {
             buffer = strtok (NULL, " ");
             fd = open (buffer, O_RDONLY | O_CREAT, 0644);
             
-            if (dup2 (fd, 0) < 0) { perror ("jsh: dup2 <"); exit (EXIT_FAILURE); }
+            if (dup2 (fd, 0) < 0) { perror ("cf-sh: dup2 <"); exit (EXIT_FAILURE); }
             
             close (fd);
             
@@ -128,7 +128,7 @@ void parse_input (char *cmd_line_input) {
             buffer = strtok (NULL, " ");
             fd = open (buffer, O_WRONLY | O_CREAT | O_TRUNC, 0644);
             
-            if (dup2 (fd, 1) < 0) { perror ("jsh: dup2 >"); exit (EXIT_FAILURE); }
+            if (dup2 (fd, 1) < 0) { perror ("cf-sh: dup2 >"); exit (EXIT_FAILURE); }
             
             close (fd);
             fflush (stdout);
@@ -141,7 +141,7 @@ void parse_input (char *cmd_line_input) {
             buffer = strtok (NULL, " ");
             fd = open (buffer, O_WRONLY | O_CREAT | O_APPEND, 0644);
             
-            if (dup2 (fd, 1) < 0) { perror ("jsh: dup2 >>"); exit (EXIT_FAILURE); }
+            if (dup2 (fd, 1) < 0) { perror ("cf-sh: dup2 >>"); exit (EXIT_FAILURE); }
             
             close (fd);
             fflush (stdout);
@@ -191,10 +191,10 @@ void parse_input (char *cmd_line_input) {
         
     }
     
-    if (exit_status == 1) { }//fprintf (stderr, "jsh: %s: command not found\n", cmds [0].argv [0]); }
+    if (exit_status == 1) { }//fprintf (stderr, "cf-sh: %s: command not found\n", cmds [0].argv [0]); }
     
-    if (dup2 (stdinfd, 0) < 0) { if (dup2 (fd, 0) < 0) { perror ("jsh: dup2 (stdin)"); exit (EXIT_FAILURE); } }
-    if (dup2 (stdoutfd, 1) < 0) { if (dup2 (fd, 1) < 0) { perror ("jsh: dup2 (stdout)"); exit (EXIT_FAILURE); } }
+    if (dup2 (stdinfd, 0) < 0) { if (dup2 (fd, 0) < 0) { perror ("cf-sh: dup2 (stdin)"); exit (EXIT_FAILURE); } }
+    if (dup2 (stdoutfd, 1) < 0) { if (dup2 (fd, 1) < 0) { perror ("cf-sh: dup2 (stdout)"); exit (EXIT_FAILURE); } }
     
     //fprintf (stderr, YELLOW "%d\n" RESET, fd);
     if (fd != 0 && fd != 1) { close (fd); }
@@ -320,7 +320,7 @@ int piped_process (commands cmds, int num_cmds) {
                     cmds [i].argv [j] = NULL;
                     fd = open (cmds [i].argv [j + 1], O_RDONLY | O_CREAT, 0644);
                     cmds [i].argv [j + 1] = NULL;
-                    if (dup2 (fd, 0) < 0) { perror ("jsh: <"); exit (EXIT_FAILURE); }
+                    if (dup2 (fd, 0) < 0) { perror ("cf-sh: <"); exit (EXIT_FAILURE); }
                     
                     close (fd);
                     
@@ -330,7 +330,7 @@ int piped_process (commands cmds, int num_cmds) {
                     fd = open (cmds [i].argv [j + 1], O_WRONLY | O_CREAT | O_TRUNC, 0644);
                     cmds [i].argv [j + 1] = NULL;
                 
-                    if (dup2 (fd, 1) < 0) { perror ("jsh: >"); exit (EXIT_FAILURE); }
+                    if (dup2 (fd, 1) < 0) { perror ("cf-sh: >"); exit (EXIT_FAILURE); }
                     
                     close (fd);
                     fflush (stdout);
@@ -340,7 +340,7 @@ int piped_process (commands cmds, int num_cmds) {
                     cmds [i].argv [j] = NULL;
                     fd = open (cmds [i].argv [j + 1], O_WRONLY | O_CREAT | O_APPEND, 0644);
                     cmds [i].argv [j + 1] = NULL;
-                    if (dup2 (fd, 1) < 0) { perror ("jsh: >>"); exit (EXIT_FAILURE); }
+                    if (dup2 (fd, 1) < 0) { perror ("cf-sh: >>"); exit (EXIT_FAILURE); }
                     
                     close (fd);
                     fflush (stdout);
@@ -399,7 +399,7 @@ int piped_process (commands cmds, int num_cmds) {
     
     if (wa_pid == -1) {
         
-        perror ("jsh: wait");
+        perror ("cf-sh: wait");
         exit (EXIT_FAILURE);
         
     } else {
@@ -410,7 +410,7 @@ int piped_process (commands cmds, int num_cmds) {
             
         } else {
             
-            perror ("jsh: WIFEXITED");
+            perror ("cf-sh: WIFEXITED");
             exit (EXIT_FAILURE);
             
         }
@@ -420,151 +420,6 @@ int piped_process (commands cmds, int num_cmds) {
    
 }
 
-
-
-
-/*
-int piped_process (commands cmds, int num_cmds) {
-    
-    int oddfd [2], evenfd [2];
-    int i;
-    
-    int wait_status;
-    pid_t w;
-    
-    for (i = 0; i < num_cmds; i ++) {
-        
-        pipe (oddfd);
-        pipe (evenfd);
-        
-        //fprintf (stderr, "%d/%d - %s\n", i, num_cmds, cmds [i].argv [0]);
-        
-        cmds [i].pid = fork ();
-        
-        if (cmds [i].pid == -1) { 
-            
-            perror ("fork");
-            if (i % 2 != 0) {
-                
-                close (oddfd [1]);
-                
-            } else {
-                
-                close (evenfd [1]);
-                
-            }
-            exit (EXIT_FAILURE); 
-            
-        } else if (cmds [i].pid == 0) { //Child
-            
-            if (i == 0) {
-                
-                if (dup2 (evenfd [1], 1) < 0) { perror ("jsh: dup2 (pipe stdout):"); exit (EXIT_FAILURE); }
-                close (evenfd [0]);
-                
-            } else if (i == (num_cmds -1)) {
-                
-                if (i % 2 == 0) {
-                    
-                    if (dup2 (oddfd [0], 0) < 0) { perror (">jsh: dup2 (pipe stdin):"); exit (EXIT_FAILURE); }
-                    close (oddfd [1]);
-                    
-                } else {
-                    
-                    if (dup2 (evenfd [0], 0) < 0) { perror ("jsh: dup2 (pipe stdin):"); exit (EXIT_FAILURE); }
-                    close (evenfd [1]);
-                    
-                }   
-                
-            } else {
-                
-                if (i % 2 == 0) {
-                    
-                    if (dup2 (oddfd [0], 0) < 0) { perror ("jsh: dup2 (pipe stdin):"); exit (EXIT_FAILURE); }
-                    if (dup2 (evenfd [1], 1) < 0) { perror ("jsh: dup2 (pipe stdout):"); exit (EXIT_FAILURE); }
-                    
-                } else {
-                    
-                    if (dup2 (evenfd [0], 0) < 0) { perror ("jsh: dup2 (pipe stdin):"); exit (EXIT_FAILURE); }
-                    if (dup2 (oddfd [1], 1) < 0) { perror ("jsh: dup2 (pipe stdout):"); exit (EXIT_FAILURE); }
-                    
-                }
-                
-            }
-            
-            //fprintf (stderr, "Running %s\n", cmds [i].argv [0]);
-            close (3);
-            close (4);
-            if (execvp (cmds [i].argv [0], cmds [i].argv) == -1) { perror (cmds [i].argv [0]); exit (EXIT_FAILURE); }
-        
-        } else { //Parent
-        
-            if (i == 0) {
-                
-                close (evenfd [1]);
-                
-            } else if (i == (num_cmds - 1)) {
-                
-                if (i % 2 != 0) {
-                    
-                    close (oddfd [0]);
-                    
-                } else {
-                    
-                    close (evenfd [0]);
-                    
-                }
-                
-            } else {
-                
-                if (i % 2 != 0) {
-                    
-                    close (evenfd [0]);
-                    close (oddfd [1]);
-                    
-                } else {
-                    
-                    close (oddfd [0]);
-                    close (evenfd [1]);
-                    
-                }
-            }
-        }
-    }
-    
-    close (oddfd [0]);
-    close (oddfd [1]);
-    close (evenfd [0]);
-    close (evenfd [1]);
-    
-    for (i = 0; i < num_cmds; i ++) {
-        
-        if (cmds [i].do_wait == 1) {
-                    
-            while ((w = wait (&wait_status)) != cmds [i].pid);
-                    
-            if (w == -1 && cmds [i].process_killed == 0) { perror ("wait"); exit_safely (cmds, 1, 0); return -1; }
-            else {
-                        
-                if (WIFEXITED (wait_status)) {
-                            
-                    //return WEXITSTATUS (wait_status);
-                            
-                } else if (cmds [i].process_killed == 0) { perror ("wait"); exit_safely (cmds, 1, 0); return -1; }
-            }
-                    
-        } else {
-                    
-            //return 0;
-                    
-        }
-        
-    }
-    
-    return 0;
-    
-}
-*/
 int cd (char *argv []) {
     
     int err;
@@ -577,7 +432,7 @@ int cd (char *argv []) {
         
         err = chdir (argv [1]);
         
-        if (err != 0) { perror ("chdir"); return -1; }
+        if (err != 0) { perror ("cf-sh: cd"); return -1; }
         else { return 0; }
     }
 }
