@@ -2,7 +2,7 @@
 
 A simple shell based on csh that can run commands, traverse directories, redirect file i/o and pipe multiple commands together.
 
-#Usage
+##Usage
 
 To run the shell as the default user
 ```
